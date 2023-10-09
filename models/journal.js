@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 const { Schema, model } = mongoose;
 
 const journalSchema = new Schema({
+    customerEmail: {
+        type: String,
+        required: true,
+    },
     title: {
         type: String,
         required: true,
@@ -10,17 +14,14 @@ const journalSchema = new Schema({
         type: String,
         required: true,
     },
-    image: {
-        type: String,
-    },
     createDate: {
         type: Date,
         default: Date.now,
     },
     status: {
         type: String,
-        default: "Pending",
-        enum: ["Pending", "Private"],
+        default: "Public",
+        enum: ["Public", "Private"],
     },
 });
 

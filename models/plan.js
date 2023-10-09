@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 const { Schema, model } = mongoose;
 
 const planSchema = new Schema({
+    customerEmail: {
+        type: String,
+        required: true,
+    },
     title: {
         type: String,
         required: true,
@@ -26,14 +30,9 @@ const planSchema = new Schema({
         type: String,
         required: true,
     },
-    createDate: {
+    date: {
         type: Date,
         default: Date.now,
-    },
-    status: {
-        type: String,
-        default: "Pending",
-        enum: ["Pending", "Private"],
     },
 });
 

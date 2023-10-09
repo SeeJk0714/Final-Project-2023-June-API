@@ -30,8 +30,6 @@ const todolistRouter = require("./routes/todolist");
 const listRouter = require("./routes/list");
 const budgetRouter = require("./routes/budget");
 const billRouter = require("./routes/bill");
-// const incomeRouter = require("./routes/income");
-// const expenseRouter = require("./routes/expense");
 const authRouter = require("./routes/auth");
 
 app.use("/journals", journalRouter);
@@ -40,8 +38,6 @@ app.use("/todolists", todolistRouter);
 app.use("/lists", listRouter);
 app.use("/budgets", budgetRouter);
 app.use("/bills", billRouter);
-// app.use("/incomes", incomeRouter);
-// app.use("/expenses", expenseRouter);
 app.use("/auth", authRouter);
 
 //set the uploads folder as static path

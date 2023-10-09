@@ -1,8 +1,10 @@
 const express = require("express");
-const Budget = require("../models/budget");
+// const Budget = require("../models/budget");
 const router = express.Router();
 
 const Bill = require("../models/bill");
+
+const authMiddleware = require("../middleware/auth");
 
 router.get("/", async (req, res) => {
     try {
@@ -17,7 +19,7 @@ router.get("/", async (req, res) => {
             }
         }
 
-        res.status(200).send(await Bill.find(filter));
+        res.status(200).send(await Bill.find(filter).populate("budgets"));
     } catch (error) {
         res.status(400).send("Bill not found");
     }
@@ -41,33 +43,30 @@ router.post("/", async (req, res) => {
             date: req.body.date,
             model: req.body.model,
             status: req.body.status,
+            budgets: req.body.budgets,
         });
         await newBill.save();
 
         res.status(200).send(newBill);
     } catch (error) {
-        console.log(error);
         res.status(400).send({ message: error._message });
     }
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", authMiddleware, async (req, res) => {
     try {
-        console.log(req.body);
         const bill_id = req.params.id;
-        console.log(bill_id);
         const updatedBill = await Bill.findByIdAndUpdate(bill_id, req.body, {
             runValidators: true,
             new: true,
         });
         res.status(200).send(updatedBill);
     } catch (error) {
-        console.log(error);
         res.status(400).send({ message: error._message });
     }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authMiddleware, async (req, res) => {
     try {
         const bill_id = req.params.id;
         const deletedBill = await Bill.findByIdAndDelete(bill_id);

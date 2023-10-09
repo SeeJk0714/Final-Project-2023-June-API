@@ -1,9 +1,11 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const router = express.Router();
+const jwt = require("jsonwebtoken");
 
 const User = require("../models/user");
 const { isEmail } = require("../utils/functions");
+const { JWT_SECRET } = require("../config");
 
 router.post("/register", async (req, res) => {
     try {
@@ -31,12 +33,17 @@ router.post("/register", async (req, res) => {
 
         //save the data
         const newUser = await user.save();
+
+        // generate JSON web token
+        const token = jwt.sign({ _id: newUser._id }, JWT_SECRET);
+
         //return back the data
         res.status(200).send({
             _id: newUser._id,
             name: newUser.name,
             email: newUser.email,
             role: newUser.role,
+            token: token,
         });
 
         // res.status(400).send({ message: error._message });
@@ -66,12 +73,16 @@ router.post("/login", async (req, res) => {
                 .send({ message: "Invalid email or password" });
         }
 
+        //generate JSON web token
+        const token = jwt.sign({ _id: user._id }, JWT_SECRET);
+
         // return back the data
         res.status(200).send({
             _id: user._id,
             name: user.name,
             email: user.email,
             role: user.role,
+            token: token,
         });
     } catch (error) {
         res.status(400).send({ message: error._message });

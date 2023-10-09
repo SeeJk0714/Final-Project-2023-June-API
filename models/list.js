@@ -8,15 +8,20 @@ const listSchema = new Schema({
         type: String,
         required: true,
     },
+    status: {
+        type: Boolean,
+        default: false,
+    },
+    todolists: { type: Schema.Types.ObjectId, ref: "Todolist" },
 });
 
-// listSchema.post("save", async function () {
-//     const listID = this._id;
-//     const todolistID = this.todolist;
-//     const selectedTodolist = await Todolist.findById(todolistID);
-//     selectedTodolist.lists.push(listID);
-//     await selectedTodolist.save();
-// });
+listSchema.post("save", async function () {
+    const listID = this._id;
+    const todolistID = this.todolists;
+    const selectedTodolist = await Todolist.findById(todolistID);
+    selectedTodolist.lists.push(listID);
+    await selectedTodolist.save();
+});
 
 const List = model("List", listSchema);
 module.exports = List;

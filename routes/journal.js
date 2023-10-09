@@ -3,7 +3,9 @@ const router = express.Router();
 
 const Journal = require("../models/journal");
 
-router.get("/", async (req, res) => {
+const authMiddleware = require("../middleware/auth");
+
+router.get("/", authMiddleware, async (req, res) => {
     try {
         const { title } = req.query;
         let filter = {};
@@ -13,7 +15,11 @@ router.get("/", async (req, res) => {
             }
         }
 
-        res.status(200).send(await Journal.find(filter));
+        if (req.user && req.user.role === "user") {
+            filter.customerEmail = req.user.email;
+        }
+
+        res.status(200).send(await Journal.find(filter).sort({ _id: -1 }));
     } catch (error) {
         res.status(400).send("Journal not found");
     }
@@ -28,13 +34,12 @@ router.get("/:id", async (req, res) => {
     }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", authMiddleware, async (req, res) => {
     try {
         const newJournal = new Journal({
             title: req.body.title,
             content: req.body.content,
-            createDate: req.body.createDate,
-            status: req.body.status,
+            customerEmail: req.body.customerEmail,
         });
         await newJournal.save();
 
@@ -44,7 +49,7 @@ router.post("/", async (req, res) => {
     }
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", authMiddleware, async (req, res) => {
     try {
         const Journal_id = req.params.id;
         const updatedJournal = await Journal.findByIdAndUpdate(
@@ -57,34 +62,16 @@ router.put("/:id", async (req, res) => {
         );
         res.status(200).send(updatedJournal);
     } catch (error) {
+        console.log(error);
         res.status(400).send({ message: error._message });
     }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authMiddleware, async (req, res) => {
     try {
         const Journal_id = req.params.id;
         const deletedJournal = await Journal.findByIdAndDelete(Journal_id);
         res.status(200).send(deletedJournal);
-    } catch (error) {
-        res.status(400).send({ message: error._message });
-    }
-});
-
-//warning-------------------------
-router.put("/:id/complete", async (req, res) => {
-    try {
-        const Journal_id = req.params.id;
-        const completedJournal = await Journal.findByIdAndUpdate(
-            Journal_id,
-            {
-                status: "Private",
-            },
-            {
-                new: true,
-            }
-        );
-        res.status(200).send(completedJournal);
     } catch (error) {
         res.status(400).send({ message: error._message });
     }

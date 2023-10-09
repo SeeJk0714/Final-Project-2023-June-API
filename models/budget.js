@@ -2,13 +2,13 @@ const mongoose = require("mongoose");
 const { Schema, model } = mongoose;
 
 const budgetSchema = new Schema({
+    customerEmail: {
+        type: String,
+        required: true,
+    },
     date: {
         type: Date,
         default: Date.now,
-    },
-    totalAmount: {
-        type: Number,
-        required: true,
     },
     bills: [
         {
