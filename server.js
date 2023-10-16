@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const { MOGODB_URL } = require("./config");
 const cors = require("cors");
 
 const app = express();
@@ -17,7 +18,7 @@ const corsHandler = cors({
 app.use(corsHandler);
 
 mongoose
-    .connect("mongodb://127.0.0.1:27017/tool")
+    .connect(MOGODB_URL + "tool")
     .then(() => console.log("MongoDBConnected... "))
     .catch((err) => console.log(err));
 
