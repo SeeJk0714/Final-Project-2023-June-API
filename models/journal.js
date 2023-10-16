@@ -23,6 +23,9 @@ const journalSchema = new Schema({
         default: "Public",
         enum: ["Public", "Private"],
     },
+    password: {
+        type: String,
+    },
 });
 
 const Journal = model("Journal", journalSchema);

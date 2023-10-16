@@ -5,7 +5,7 @@ const List = require("../models/list");
 
 const authMiddleware = require("../middleware/auth");
 
-router.get("/", async (req, res) => {
+router.get("/", authMiddleware, async (req, res) => {
     try {
         const { name, status } = req.query;
         let filter = {};
@@ -50,52 +50,39 @@ router.post("/", async (req, res) => {
     }
 });
 
-router.put("/:id", authMiddleware, async (req, res) => {
+router.put("/:id/click", async (req, res) => {
     try {
         const List_id = req.params.id;
-        const updatedList = await List.findByIdAndUpdate(List_id, req.body, {
-            runValidators: true,
-            new: true,
-        });
-        res.status(200).send(updatedList);
-    } catch (error) {
-        res.status(400).send({ message: error._message });
-    }
-});
-
-router.put("/:id/update", authMiddleware, async (req, res) => {
-    try {
-        const List_id = req.params.id;
-        const updatedStatusList = await List.findByIdAndUpdate(
+        const result = await List.findByIdAndUpdate(
             List_id,
             { status: true },
             {
-                new: true,
+                new: true, // return the modified data
             }
         );
-        res.status(200).send(updatedStatusList);
+        res.status(200).send(result);
     } catch (error) {
         res.status(400).send({ message: error._message });
     }
 });
 
-router.put("/:id/unupdate", authMiddleware, async (req, res) => {
+router.put("/:id/unclick", async (req, res) => {
     try {
         const List_id = req.params.id;
-        const unupdateStatusList = await List.findByIdAndUpdate(
+        const result2 = await List.findByIdAndUpdate(
             List_id,
             { status: false },
             {
-                new: true,
+                new: false, // return the modified data
             }
         );
-        res.status(200).send(unupdateStatusList);
+        res.status(200).send(result2);
     } catch (error) {
         res.status(400).send({ message: error._message });
     }
 });
 
-router.delete("/:id", authMiddleware, async (req, res) => {
+router.delete("/:id", async (req, res) => {
     try {
         const List_id = req.params.id;
         const deletedList = await List.findByIdAndDelete(List_id);

@@ -16,6 +16,10 @@ const todolistSchema = new Schema({
             ref: "List",
         },
     ],
+    date: {
+        type: Date,
+        default: Date.now,
+    },
 });
 
 const Todolist = model("Todolist", todolistSchema);

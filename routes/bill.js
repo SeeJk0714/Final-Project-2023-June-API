@@ -1,5 +1,4 @@
 const express = require("express");
-// const Budget = require("../models/budget");
 const router = express.Router();
 
 const Bill = require("../models/bill");
@@ -19,7 +18,9 @@ router.get("/", async (req, res) => {
             }
         }
 
-        res.status(200).send(await Bill.find(filter).populate("budgets"));
+        res.status(200).send(
+            await Bill.find(filter).populate("budgets").sort({ _id: -1 })
+        );
     } catch (error) {
         res.status(400).send("Bill not found");
     }
@@ -27,7 +28,9 @@ router.get("/", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
     try {
-        const data = await Bill.findOne({ _id: req.params.id });
+        const data = await Bill.findOne({ _id: req.params.id }).populate(
+            "budgets"
+        );
         res.status(200).send(data);
     } catch (error) {
         res.status(400).send({ message: "Bill not found" });
@@ -53,20 +56,7 @@ router.post("/", async (req, res) => {
     }
 });
 
-router.put("/:id", authMiddleware, async (req, res) => {
-    try {
-        const bill_id = req.params.id;
-        const updatedBill = await Bill.findByIdAndUpdate(bill_id, req.body, {
-            runValidators: true,
-            new: true,
-        });
-        res.status(200).send(updatedBill);
-    } catch (error) {
-        res.status(400).send({ message: error._message });
-    }
-});
-
-router.delete("/:id", authMiddleware, async (req, res) => {
+router.delete("/:id", async (req, res) => {
     try {
         const bill_id = req.params.id;
         const deletedBill = await Bill.findByIdAndDelete(bill_id);

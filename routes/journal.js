@@ -40,6 +40,7 @@ router.post("/", authMiddleware, async (req, res) => {
             title: req.body.title,
             content: req.body.content,
             customerEmail: req.body.customerEmail,
+            password: req.body.password,
         });
         await newJournal.save();
 

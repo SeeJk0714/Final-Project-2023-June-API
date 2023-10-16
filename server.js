@@ -6,7 +6,6 @@ const app = express();
 app.use(express.json());
 const port = 5000;
 
-// setup cors
 const corsHandler = cors({
     origin: "*",
     methods: "GET,POST,PUT,DELETE",
@@ -17,13 +16,11 @@ const corsHandler = cors({
 
 app.use(corsHandler);
 
-// MongoDB Connection
 mongoose
     .connect("mongodb://127.0.0.1:27017/tool")
     .then(() => console.log("MongoDBConnected... "))
     .catch((err) => console.log(err));
 
-// routes
 const journalRouter = require("./routes/journal");
 const planRouter = require("./routes/plan");
 const todolistRouter = require("./routes/todolist");
@@ -40,12 +37,8 @@ app.use("/budgets", budgetRouter);
 app.use("/bills", billRouter);
 app.use("/auth", authRouter);
 
-//set the uploads folder as static path
-// app.use("/uploads", express.static("uploads"));
-
 app.get("/", (req, res) => {
     res.send("Tools");
 });
 
-// Server listening
 app.listen(port, () => console.log(`Server started on port ${port}`));

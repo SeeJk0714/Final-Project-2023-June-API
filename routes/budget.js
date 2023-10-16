@@ -16,7 +16,7 @@ router.get("/", authMiddleware, async (req, res) => {
         }
 
         res.status(200).send(
-            await Budget.find().populate("bills").sort({ _id: -1 })
+            await Budget.find(filter).populate("bills").sort({ _id: -1 })
         );
     } catch (error) {
         res.status(400).send({ message: "Failed to update the budget" });
@@ -25,7 +25,9 @@ router.get("/", authMiddleware, async (req, res) => {
 
 router.get("/:id", async (req, res) => {
     try {
-        const data = await Budget.findOne({ _id: req.params.id });
+        const data = await Budget.findOne({ _id: req.params.id }).populate(
+            "bills"
+        );
         res.status(200).send(data);
     } catch (error) {
         res.status(400).send({ message: "Budget not found" });
@@ -40,6 +42,16 @@ router.post("/", authMiddleware, async (req, res) => {
         });
         await newBudget.save();
         res.status(200).send(newBudget);
+    } catch (error) {
+        res.status(400).send({ message: error._message });
+    }
+});
+
+router.delete("/:id", authMiddleware, async (req, res) => {
+    try {
+        const Budget_id = req.params.id;
+        const deletedBudget = await Budget.findByIdAndDelete(Budget_id);
+        res.status(200).send(deletedBudget);
     } catch (error) {
         res.status(400).send({ message: error._message });
     }

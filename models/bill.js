@@ -25,10 +25,9 @@ const billSchema = new Schema({
         enum: ["Income", "Expenses"],
         required: true,
     },
-    status: {
-        type: String,
-        default: "Undone",
-        enum: ["Undone", "Done"],
+    date: {
+        type: Date,
+        default: Date.now,
     },
     budgets: { type: Schema.Types.ObjectId, ref: "Budget" },
 });

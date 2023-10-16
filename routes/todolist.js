@@ -22,7 +22,7 @@ router.get("/", authMiddleware, async (req, res) => {
         }
 
         res.status(200).send(
-            await TodoList.find().populate("lists").sort({ _id: -1 })
+            await TodoList.find(filter).populate("lists").sort({ _id: -1 })
         );
     } catch (error) {
         res.status(400).send({ message: "Failed to update the todolist" });
@@ -31,7 +31,9 @@ router.get("/", authMiddleware, async (req, res) => {
 
 router.get("/:id", async (req, res) => {
     try {
-        const data = await TodoList.findOne({ _id: req.params.id });
+        const data = await TodoList.findOne({ _id: req.params.id }).populate(
+            "lists"
+        );
         res.status(200).send(data);
     } catch (error) {
         res.status(400).send({ message: "Product not found" });
